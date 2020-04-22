@@ -5,3 +5,5 @@ pub mod pedersen_hash;
 
 pub mod sapling;
 pub mod sprout;
+pub mod merkle;
+pub mod merkle_sha;
