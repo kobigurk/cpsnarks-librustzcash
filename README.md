@@ -1,5 +1,7 @@
 # Zcash Rust crates
 
+Modified version of [librustzcash](https://github.com/zcash/librustzcash/) that performs set membership benchmarks as described in [CPSNARKs-Set](https://github.com/kobigurk/cpsnarks-set).
+
 This repository contains a (work-in-progress) set of Rust crates for
 working with Zcash.
 
