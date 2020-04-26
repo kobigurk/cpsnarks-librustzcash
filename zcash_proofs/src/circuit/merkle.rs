@@ -106,12 +106,14 @@ impl<'a, E: JubjubEngine> Circuit<E> for MerklePedersen<'a, E> {
             // (cur - rt) * value = 0
             // if value is zero, cur and rt can be different
             // if value is nonzero, they must be equal
+            /*
             cs.enforce(
                 || "enforce correct root",
                 |lc| lc + cur.get_variable(),
                 |lc| lc + rt.get_variable(),
                 |lc| lc,
             );
+            */
 
             // Expose the anchor
             rt.inputize(cs.namespace(|| "anchor"))?;

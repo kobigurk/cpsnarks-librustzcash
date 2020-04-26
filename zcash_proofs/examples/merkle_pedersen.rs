@@ -34,14 +34,16 @@ fn main() {
 
         const SAMPLES: u32 = 50;
 
+        let prepared_vk = prepare_verifying_key(&groth_params.vk);
         let mut total_time = Duration::new(0, 0);
+        let mut total_verification_time = Duration::new(0, 0);
         for _ in 0..SAMPLES {
             let cm = Fr::random(rng);
             let auth_path = vec![Some((Fr::random(rng), rng.next_u32() % 2 != 0)); TREE_DEPTH];
             let anchor = Fr::random(rng);
 
             let start = Instant::now();
-            let _ = create_random_proof(
+            let proof = create_random_proof(
                 MerklePedersen {
                     params: jubjub_params,
                     leaf: Some(cm),
@@ -53,10 +55,16 @@ fn main() {
             )
             .unwrap();
             total_time += start.elapsed();
+            let start_verify = Instant::now();
+            assert!(verify_proof(&prepared_vk, &proof, &[anchor]).unwrap());
+            total_verification_time += start_verify.elapsed();
         }
         let avg = total_time / SAMPLES;
         let avg = avg.subsec_nanos() as f64 / 1_000_000_000f64 + (avg.as_secs() as f64);
+        let avg_verify = total_verification_time / SAMPLES;
+        let avg_verify = avg_verify.subsec_nanos() as f64 / 1_000_000_000f64 + (avg_verify.as_secs() as f64);
 
         println!("depth {}: Average proving time (in seconds): {}", TREE_DEPTH, avg);
+        println!("depth {}: Average verification time (in seconds): {}", TREE_DEPTH, avg_verify);
     }
 }
