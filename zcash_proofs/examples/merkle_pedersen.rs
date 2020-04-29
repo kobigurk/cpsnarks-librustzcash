@@ -8,6 +8,40 @@ use zcash_primitives::jubjub::{edwards, fs, JubjubBls12};
 use zcash_primitives::primitives::{Diversifier, ProofGenerationKey, ValueCommitment};
 use zcash_proofs::circuit::merkle::MerklePedersen;
 
+fn crs_size(parameters: &Parameters<Bls12>) -> (usize, usize) {
+
+    let mut vk_accum = 0;
+    // Groth16 vk
+    vk_accum += 48;
+    vk_accum += 96;
+    vk_accum += 96;
+    vk_accum += 96;
+    for g in &parameters.vk.ic {
+        vk_accum += 48;
+    }
+
+    let mut pk_accum = 0;
+    pk_accum += 48;
+    pk_accum += 48;
+    pk_accum += 48;
+    for g in &*parameters.a {
+        pk_accum += 48;
+    }
+    for g in &*parameters.b_g1 {
+        pk_accum += 48;
+    }
+    for g in &*parameters.b_g2 {
+        pk_accum += 96;
+    }
+    for g in &*parameters.h{
+        pk_accum += 48;
+    }
+    for g in &*parameters.l{
+        pk_accum += 48;
+    }
+
+    (vk_accum, pk_accum)
+}
 
 fn main() {
     let jubjub_params = &JubjubBls12::new();
@@ -15,6 +49,7 @@ fn main() {
         0x59, 0x62, 0xbe, 0x3d, 0x76, 0x3d, 0x31, 0x8d, 0x17, 0xdb, 0x37, 0x32, 0x54, 0x06, 0xbc,
         0xe5,
     ]);
+    
 
 
     for depth in [8, 16, 32, 64].iter() {
@@ -31,6 +66,7 @@ fn main() {
             rng,
         )
         .unwrap();
+    println!("crs size: {:?}", crs_size(&groth_params));
 
         const SAMPLES: u32 = 50;
 
